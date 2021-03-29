@@ -18,6 +18,6 @@ public class UserSkillFunctions : MonoBehaviour
 
     public void onClick(string skillType)
     {
-        Debug.Log("안녕  " + skillType);
+        Debug.Log("Hello  " + skillType);
     }
 }

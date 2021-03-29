@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UserSkill : MonoBehaviour
 {
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -25,14 +26,14 @@ public class UserSkill : MonoBehaviour
         }
     }
 
-    GameObject CastRay() // 유닛 히트처리 부분.  레이를 쏴서 처리합니다. 
+    GameObject CastRay() 
     {
         Vector2 pos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast (pos, Vector2.zero, 0f);
 
-        if (hit.collider != null) { //히트되었다면 여기서 실행
+        if (hit.collider != null) { 
             Debug.Log("HI " + hit.collider.gameObject.name);
-            return hit.collider.gameObject;  //히트 된 게임 오브젝트를 타겟으로 지정
+            return hit.collider.gameObject;  
         }
         else
         {

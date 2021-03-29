@@ -7,6 +7,10 @@ public class Movement2D : MonoBehaviour
     private Vector3 moveDirection;
     private Rigidbody2D rigid2d;
 
+    public GameObject pPreviousSkill = null;
+    public GameObject pNextSkill = null;
+    public int skillType = -1;
+
     private void Awake()
     {
         rigid2d = GetComponent<Rigidbody2D>();

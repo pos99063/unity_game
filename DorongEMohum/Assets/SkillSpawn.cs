@@ -16,6 +16,7 @@ public class SkillSpawn : MonoBehaviour
 	private int currentObjectCount = 0;
 	private float skillSpawnTime = 0.0f;
 	private float delayedTime = 2.0f;
+	private GameObject lastSkill = null;
 
 	// Start is called before the first frame update
 	void Start()
@@ -42,12 +43,24 @@ public class SkillSpawn : MonoBehaviour
 			//Debug.Log(skillPrefabArray + " " + prefabIndex + " " + skillPrefabArray[prefabIndex]);
 			GameObject skill = Instantiate(skillPrefabArray[prefabIndex], position, Quaternion.identity);
 			Transform Parent = GameObject.Find("UserSkill").GetComponent<Transform>();
-			skill.transform.parent  = Parent;
+			skill.transform.parent = Parent;
 
 			Vector3 moveDirection = Vector3.right;
 			skill.GetComponent<Movement2D>().Setup(moveDirection);
 			currentObjectCount++;
 			skillSpawnTime = 0.0f; 
+			
+			if(lastSkill != null)
+			{
+				skill.GetComponent<Movement2D>().pPreviousSkill = lastSkill;
+				lastSkill.GetComponent<Movement2D>().pNextSkill = skill;
+			}
+			Debug.Log("HI " + skill + " "+ skill.GetComponent<Movement2D>());
+			//Debug.Log("HI " + skill + " "+ skill.GetComponent<UserSkill>().skillType);
+
+			skill.GetComponent<Movement2D>().skillType = prefabIndex;
+			
+			lastSkill = skill;
 		}
 	}
 
@@ -56,10 +69,37 @@ public class SkillSpawn : MonoBehaviour
         Vector3 position = userPoint.position;
         Vector3 moveDirection = Vector3.left;
 		obj.transform.localPosition = position;
+		GameObject prev = obj.GetComponent<Movement2D>().pPreviousSkill;
+		GameObject next = obj.GetComponent<Movement2D>().pNextSkill;
+		int skillType = obj.GetComponent<Movement2D>().skillType;
 
+		if(next != null)
+		{
+			next.GetComponent<Movement2D>().pPreviousSkill = prev;
+		}
+		if(prev != null)
+		{
+			prev.GetComponent<Movement2D>().pNextSkill = next;
+		}
+		
         obj.GetComponent<Movement2D>().Setup(moveDirection);
         Destroy(obj, delayedTime);
 		currentObjectCount--;
+
+		if(prev != null && prev.GetComponent<Movement2D>().skillType == skillType)
+		{
+			
+			this.UseSkillAndDestroy(prev);
+		}
+
+		if(next != null && next.GetComponent<Movement2D>().skillType == skillType)
+		{
+			
+			this.UseSkillAndDestroy(next);
+		}
+		
+
+
     }
 
 
