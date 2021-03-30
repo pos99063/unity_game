@@ -22,7 +22,6 @@ public class UserSkill : MonoBehaviour
                 target.transform.parent.GetComponent<UserSkillFunctions>().onClick(target.name);
                 GameObject.Find("SkillSpawner").GetComponent<SkillSpawn>().UseSkillAndDestroy(target);
             }
-            
         }
     }
 
@@ -32,7 +31,7 @@ public class UserSkill : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast (pos, Vector2.zero, 0f);
 
         if (hit.collider != null) { 
-            Debug.Log("HI " + hit.collider.gameObject.name);
+            //Debug.Log("HI " + hit.collider.gameObject.name);
             return hit.collider.gameObject;  
         }
         else

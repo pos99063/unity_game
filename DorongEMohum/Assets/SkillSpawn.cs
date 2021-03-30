@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class SkillSpawn : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class SkillSpawn : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{	
-		//Debug.Log(currentObjectCount + "/" + skillSpawnCount);
+		
 		if( currentObjectCount + 1 > skillSpawnCount)
 		{
 			return;
@@ -36,6 +37,7 @@ public class SkillSpawn : MonoBehaviour
 
 		if ( skillSpawnTime >= 0.5f )
 		{
+			//Debug.Log(currentObjectCount + "/" + skillSpawnCount);
 			int prefabIndex = Random.Range(0, skillPrefabArray.Length);
 
 			Vector3 position = spawnPoint.position;
@@ -44,34 +46,40 @@ public class SkillSpawn : MonoBehaviour
 			GameObject skill = Instantiate(skillPrefabArray[prefabIndex], position, Quaternion.identity);
 			Transform Parent = GameObject.Find("UserSkill").GetComponent<Transform>();
 			skill.transform.parent = Parent;
-
-			Vector3 moveDirection = Vector3.right;
-			skill.GetComponent<Movement2D>().Setup(moveDirection);
-			currentObjectCount++;
-			skillSpawnTime = 0.0f; 
 			
 			if(lastSkill != null)
 			{
 				skill.GetComponent<Movement2D>().pPreviousSkill = lastSkill;
 				lastSkill.GetComponent<Movement2D>().pNextSkill = skill;
 			}
-			Debug.Log("HI " + skill + " "+ skill.GetComponent<Movement2D>());
+			//Debug.Log("HI " + skill + " "+ skill.GetComponent<Movement2D>());
 			//Debug.Log("HI " + skill + " "+ skill.GetComponent<UserSkill>().skillType);
 
 			skill.GetComponent<Movement2D>().skillType = prefabIndex;
 			
 			lastSkill = skill;
+
+			Vector3 moveDirection = Vector3.right;
+			skill.GetComponent<Movement2D>().Setup(moveDirection);
+			currentObjectCount++;
+			skillSpawnTime = 0.0f; 
 		}
 	}
 
-	public void UseSkillAndDestroy(GameObject obj)
+	public void UseSkillAndDestroy(GameObject obj, int direction=0)
     {
         Vector3 position = userPoint.position;
-        Vector3 moveDirection = Vector3.left;
+        // Vector3 moveDirection = Vector3.left;
+		Vector3 moveDirection = new Vector3(-1, Random.Range(0.0f, 1.0f), 0);
+		
 		obj.transform.localPosition = position;
+		obj.GetComponent<Movement2D>().SetRotation(
+			Random.Range(100.0f, 150.0f) * (float)Random.Range(-1, 1)
+		);
 		GameObject prev = obj.GetComponent<Movement2D>().pPreviousSkill;
 		GameObject next = obj.GetComponent<Movement2D>().pNextSkill;
 		int skillType = obj.GetComponent<Movement2D>().skillType;
+		
 
 		if(next != null)
 		{
@@ -83,24 +91,25 @@ public class SkillSpawn : MonoBehaviour
 		}
 		
         obj.GetComponent<Movement2D>().Setup(moveDirection);
-        Destroy(obj, delayedTime);
+        
 		currentObjectCount--;
-
-		if(prev != null && prev.GetComponent<Movement2D>().skillType == skillType)
-		{
-			
-			this.UseSkillAndDestroy(prev);
-		}
-
-		if(next != null && next.GetComponent<Movement2D>().skillType == skillType)
-		{
-			
-			this.UseSkillAndDestroy(next);
-		}
+		int originDirection = direction;
+		Debug.Log(direction +" "+ prev +" "+ next);
 		
+		if(prev != null && prev.GetComponent<Movement2D>().skillType == skillType && originDirection != 1)
+		{
+			this.UseSkillAndDestroy(prev, direction=-1);
+		}
+		Debug.Log(direction +" "+ prev +" "+ next);
+		
+		if(next != null && next.GetComponent<Movement2D>().skillType == skillType && originDirection != -1)
+		{
+			this.UseSkillAndDestroy(next, direction=1);
+		}
 
-
+		Destroy(obj, delayedTime);
     }
+
 
 
 }

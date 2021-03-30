@@ -11,6 +11,8 @@ public class Movement2D : MonoBehaviour
     public GameObject pNextSkill = null;
     public int skillType = -1;
 
+    private float rotateSpeed = 0.0f;
+
     private void Awake()
     {
         rigid2d = GetComponent<Rigidbody2D>();
@@ -21,16 +23,22 @@ public class Movement2D : MonoBehaviour
         moveDirection = direction;
     }
 
+    public void SetRotation(float speed)
+    {
+        rotateSpeed = speed;
+    }
+
     private void Update()
     {
         //transform.position += moveDirection * moveSpeed * Time.deltaTime;
 
         rigid2d.velocity = moveDirection * moveSpeed;
+        transform.Rotate(new Vector3(0, 0, 1) * Time.deltaTime * rotateSpeed);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        moveSpeed = 0.1f;
+        moveSpeed = 0.0f;
     }
 
     private void OnCollisionExit2D(Collision2D collision)
