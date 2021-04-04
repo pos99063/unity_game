@@ -1,14 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UserSkill : MonoBehaviour
 {
-    
+    private int score=0;
+    private int defaultScore=10;
+
+    public Text scoreText;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        UpdateScore(0);
     }
 
     // Update is called once per frame
@@ -20,9 +25,18 @@ public class UserSkill : MonoBehaviour
             if(target != null)
             {
                 target.transform.parent.GetComponent<UserSkillFunctions>().onClick(target.name);
-                GameObject.Find("SkillSpawner").GetComponent<SkillSpawn>().UseSkillAndDestroy(target);
+                int combo = GameObject.Find("SkillSpawner").GetComponent<SkillSpawn>().UseSkillAndDestroy(target);
+                UpdateScore(combo);
+
             }
         }
+    }
+
+    void UpdateScore(int combo=0)
+    {
+        int c = combo;
+        this.score += (this.defaultScore * c * c);
+        this.scoreText.text = "Score: " + this.score;
     }
 
     GameObject CastRay() 

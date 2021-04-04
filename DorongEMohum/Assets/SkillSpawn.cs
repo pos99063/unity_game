@@ -66,7 +66,7 @@ public class SkillSpawn : MonoBehaviour
 		}
 	}
 
-	public void UseSkillAndDestroy(GameObject obj, int direction=0)
+	public int UseSkillAndDestroy(GameObject obj, int direction=0, int combo=1)
     {
         Vector3 position = userPoint.position;
         // Vector3 moveDirection = Vector3.left;
@@ -94,20 +94,22 @@ public class SkillSpawn : MonoBehaviour
         
 		currentObjectCount--;
 		int originDirection = direction;
-		Debug.Log(direction +" "+ prev +" "+ next);
+		int currentCombo = combo;
+		//Debug.Log(direction +" "+ prev +" "+ next);
 		
 		if(prev != null && prev.GetComponent<Movement2D>().skillType == skillType && originDirection != 1)
 		{
-			this.UseSkillAndDestroy(prev, direction=-1);
+			currentCombo = this.UseSkillAndDestroy(prev, direction=-1, combo=currentCombo+1);
 		}
-		Debug.Log(direction +" "+ prev +" "+ next);
+		// Debug.Log(direction +" "+ prev +" "+ next);
 		
 		if(next != null && next.GetComponent<Movement2D>().skillType == skillType && originDirection != -1)
 		{
-			this.UseSkillAndDestroy(next, direction=1);
+			currentCombo = this.UseSkillAndDestroy(next, direction=1, combo=currentCombo+1);
 		}
 
 		Destroy(obj, delayedTime);
+		return currentCombo;
     }
 
 
